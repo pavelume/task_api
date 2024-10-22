@@ -3,7 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const axios = require('axios');
-const { sendAlertEmail } = require('./utils/email');
 const { generateCSV, generatePDF } = require('./utils/reports');
 const { Lead, Campaign } = require('./models/data');
 
@@ -30,9 +29,7 @@ app.get('/api/fetch-leads', async (req, res) => {
   }
 });
 
-/**
- * Simulated Fetching of Campaign Data from a Dummy Marketing Platform
- */
+
 app.get('/api/fetch-campaigns', async (req, res) => {
   try {
     // Simulating API request to a marketing platform
@@ -48,9 +45,7 @@ app.get('/api/fetch-campaigns', async (req, res) => {
   }
 });
 
-/**
- * Generate Reports (CSV/PDF) based on stored data
- */
+
 app.get('/api/report/:format', async (req, res) => {
   try {
     const leads = await Lead.find();
@@ -76,19 +71,7 @@ app.get('/api/report/:format', async (req, res) => {
   }
 });
 
-/**
- * Alert if certain conditions are met (e.g., more than 1000 leads)
- */
-app.get('/api/check-alerts', async (req, res) => {
-  const leadCount = await Lead.countDocuments();
 
-  if (leadCount > 1000) {
-    sendAlertEmail('admin@ezymetrics.com', 'Lead threshold exceeded', `There are ${leadCount} leads in the system.`);
-    res.json({ message: 'Alert email sent' });
-  } else {
-    res.json({ message: 'No alerts triggered' });
-  }
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
